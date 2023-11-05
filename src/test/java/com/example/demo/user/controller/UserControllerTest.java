@@ -1,7 +1,7 @@
 package com.example.demo.user.controller;
 
+import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserUpdate;
-import com.example.demo.user.infrastructure.UserEntity;
 import com.example.demo.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class UserControllerTest {
                         .queryParam("certificationCode", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab"))
                 .andExpect(status().isFound());
 
-        UserEntity result = userService.getById(2);
+        User result = userService.getById(2);
 
         assertThat(result.getStatus()).isEqualTo(ACTIVE);
     }

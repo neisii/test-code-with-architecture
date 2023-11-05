@@ -1,9 +1,8 @@
 package com.example.demo.post.service;
 
+import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.infrastructure.PostEntity;
-import com.example.demo.post.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +25,7 @@ class PostServiceTest {
 
     @Test
     void getById_find_Content_That_exist() {
-        PostEntity result = postService.getById(1);
+        Post result = postService.getById(1);
 
         assertThat(result.getWriter().getEmail()).isEqualTo("kok202@naver.com");
     }
@@ -40,7 +39,7 @@ class PostServiceTest {
 
         postService.create(postCreate);
 
-        PostEntity result = postService.getById(1);
+        Post result = postService.getById(1);
 
         assertThat(result.getWriter().getId()).isEqualTo(1);
 
@@ -54,7 +53,7 @@ class PostServiceTest {
 
         postService.update(1, postUpdate);
 
-        PostEntity result = postService.getById(1);
+        Post result = postService.getById(1);
         assertThat(result.getContent()).isEqualTo("bbb");
     }
 }
