@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.PostCreateDto;
+import com.example.demo.post.domain.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +33,14 @@ class PostCreateControllerTest {
     @Test
     void createPost() throws Exception {
 
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
                 .content("aaaa")
                 .writerId(1)
                 .build();
 
         mockMvc.perform(post("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postCreateDto)))
+                        .content(objectMapper.writeValueAsString(postCreate)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.content").value("aaaa"))
                 .andExpect(jsonPath("$.writer.id").value(1))

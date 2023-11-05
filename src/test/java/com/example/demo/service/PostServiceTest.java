@@ -1,10 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.PostCreateDto;
-import com.example.demo.model.dto.PostUpdateDto;
-import com.example.demo.repository.PostEntity;
-import jakarta.persistence.PostUpdate;
-import org.assertj.core.api.Assertions;
+import com.example.demo.post.domain.PostCreate;
+import com.example.demo.post.domain.PostUpdate;
+import com.example.demo.post.infrastructure.PostEntity;
+import com.example.demo.post.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,12 +33,12 @@ class PostServiceTest {
 
     @Test
     void create() {
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
                 .content("aa")
                 .writerId(1)
                 .build();
 
-        postService.create(postCreateDto);
+        postService.create(postCreate);
 
         PostEntity result = postService.getById(1);
 
@@ -49,11 +48,11 @@ class PostServiceTest {
 
     @Test
     void update() {
-        PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        PostUpdate postUpdate = PostUpdate.builder()
                 .content("bbb")
                 .build();
 
-        postService.update(1, postUpdateDto);
+        postService.update(1, postUpdate);
 
         PostEntity result = postService.getById(1);
         assertThat(result.getContent()).isEqualTo("bbb");
