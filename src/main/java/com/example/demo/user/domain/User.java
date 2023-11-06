@@ -65,7 +65,7 @@ public class User {
     }
 
     public User certificate(String certificationCode) {
-        if (!certificationCode.equals(certificationCode)) {
+        if (!this.certificationCode.equals(certificationCode)) {
             throw new CertificationCodeNotMatchedException();
         }
 
