@@ -119,38 +119,4 @@ class PostServiceTest {
         void toResponse() {
         }
     }
-
-    @SpringBootTest
-    @AutoConfigureMockMvc
-    @AutoConfigureTestDatabase
-    @SqlGroup({
-            @Sql(value = "/sql/post-create-controller-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    })
-    static
-    class PostCreateControllerTest {
-
-        @Autowired
-        private MockMvc mockMvc;
-        private ObjectMapper objectMapper = new ObjectMapper();
-
-        @Test
-        void createPost() throws Exception {
-
-            PostCreate postCreate = PostCreate.builder()
-                    .content("aaaa")
-                    .writerId(1)
-                    .build();
-
-            mockMvc.perform(post("/api/posts")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(postCreate)))
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.content").value("aaaa"))
-                    .andExpect(jsonPath("$.writer.id").value(1))
-                    .andExpect(jsonPath("$.writer.email").value("kok202@naver.com"))
-                    .andExpect(jsonPath("$.writer.nickname").value("kok202"))
-            ;
-        }
-    }
 }

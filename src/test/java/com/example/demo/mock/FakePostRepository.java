@@ -14,7 +14,8 @@ public class FakePostRepository implements PostRepository {
     private final List<Post> data = new ArrayList<>();
     @Override
     public Optional<Post> findById(long id) {
-        return data.stream().filter(item -> item.getId().equals(id)).findAny();
+        return data.stream()
+                .filter(item -> item.getId().equals(id)).findAny();
     }
 
     @Override
