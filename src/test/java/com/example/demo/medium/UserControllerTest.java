@@ -2,7 +2,7 @@ package com.example.demo.medium;
 
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserUpdate;
-import com.example.demo.user.service.UserService;
+import com.example.demo.user.service.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
 

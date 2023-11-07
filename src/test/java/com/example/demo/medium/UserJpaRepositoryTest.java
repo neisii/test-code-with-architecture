@@ -6,7 +6,7 @@ import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
 import com.example.demo.user.infrastructure.UserEntity;
 import com.example.demo.user.infrastructure.UserJpaRepository;
-import com.example.demo.user.service.UserService;
+import com.example.demo.user.service.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,7 +110,7 @@ class UserJpaRepositoryTest {
         private MockMvc mockMvc;
 
         @Autowired
-        private UserService userService;
+        private UserServiceImpl userService;
         private ObjectMapper objectMapper = new ObjectMapper();
 
 
