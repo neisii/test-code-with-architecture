@@ -1,28 +1,18 @@
 package com.example.demo.user.controller;
 
+import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.mock.TestClockHolder;
 import com.example.demo.mock.TestContainer;
-import com.example.demo.user.controller.port.AuthenticationService;
-import com.example.demo.user.controller.port.UserReadService;
+import com.example.demo.mock.TestUuidHolder;
+import com.example.demo.user.controller.response.MyProfileResponse;
 import com.example.demo.user.controller.response.UserResponse;
 import com.example.demo.user.domain.User;
-import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
-import com.example.demo.user.service.UserServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static com.example.demo.user.domain.UserStatus.ACTIVE;
 import static com.example.demo.user.domain.UserStatus.PENDING;
@@ -30,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 class UserControllerTest {
@@ -97,7 +86,7 @@ class UserControllerTest {
         assertThat(testContainer.userRepository.getById(1).getStatus()).isEqualTo(ACTIVE);
     }
 
-    @DisplayName("사용자는 개인정보가 소거된 특정 유저의 정보를 받을 수 있다")
+    @DisplayName("사용자는 인증 코드가 일치하지 않을 경우 권한 없음 에러를 받는다")
     @Test
     void verifyEmail_forbidden() {
         // given
@@ -114,31 +103,68 @@ class UserControllerTest {
                 .build());
 
         // when// then
-        ResponseEntity<Void> result = testContainer.userController.verifyEmail(2, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThatThrownBy(() -> testContainer.userController.verifyEmail(1, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaac"))
+                .isInstanceOf(CertificationCodeNotMatchedException.class);
     }
 
-    @DisplayName("사용자는 개인정보가 소거된 특정 유저의 정보를 받을 수 있다")
+    @DisplayName("사용자는 내 정보를 불러올 때  개인정보인 주소도 받을 수 있다")
     @Test
     void getMyInfo_return_address() {
+        // given
+        TestContainer testContainer = TestContainer.builder()
+                .clockHolder(new TestClockHolder(1678530673958L))
+                .uuidHolder(new TestUuidHolder("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .build();
+        testContainer.userRepository.save(User.builder()
+                .id(1L)
+                .email("kok202@naver.com")
+                .nickname("kok202")
+                .address("Seoul")
+                .status(ACTIVE)
+                .lastLoginAt(100L)
+                .certificationCode("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                .build());
+
+        // when// then
+        ResponseEntity<MyProfileResponse> result = testContainer.userController.getMyInfo("kok202@naver.com");
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().getEmail()).isEqualTo("kok202@naver.com");
+        assertThat(result.getBody().getNickname()).isEqualTo("kok202");
+        assertThat(result.getBody().getAddress()).isEqualTo("Seoul");
+        assertThat(result.getBody().getStatus()).isEqualTo(ACTIVE);
+        assertThat(result.getBody().getLastLoginAt()).isEqualTo(1678530673958L);
     }
 
-    @DisplayName("사용자는 개인정보가 소거된 특정 유저의 정보를 받을 수 있다")
+    @DisplayName("사용자는 내 정보를 수정할 수 있다.")
     @Test
     void updateMyInfo() {
+        // given
+        TestContainer testContainer = TestContainer.builder()
+                .build();
+        testContainer.userRepository.save(User.builder()
+                .id(1L)
+                .email("kok202@naver.com")
+                .nickname("kok202")
+                .address("Seoul")
+                .status(ACTIVE)
+                .lastLoginAt(100L)
+                .certificationCode("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                .build());
         UserUpdate userUpdate = UserUpdate.builder()
                 .nickname("kok202-n")
                 .address("Pangyo")
                 .build();
 
-    }
+        // when// then
+        ResponseEntity<MyProfileResponse> result = testContainer.userController.updateMyInfo("kok202@naver.com", userUpdate);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().getEmail()).isEqualTo("kok202@naver.com");
+        assertThat(result.getBody().getNickname()).isEqualTo("kok202-n");
+        assertThat(result.getBody().getAddress()).isEqualTo("Pangyo");
+        assertThat(result.getBody().getStatus()).isEqualTo(ACTIVE);
+        assertThat(result.getBody().getLastLoginAt()).isEqualTo(100L);
 
-    @Test
-    void toResponse() {
-    }
-
-    @Test
-    void toMyProfileResponse() {
     }
 }

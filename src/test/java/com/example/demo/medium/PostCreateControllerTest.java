@@ -1,5 +1,6 @@
 package com.example.demo.medium;
 
+
 import com.example.demo.post.domain.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -33,8 +34,8 @@ class PostCreateControllerTest {
     void createPost() throws Exception {
 
         PostCreate postCreate = PostCreate.builder()
-                .content("aaaa")
                 .writerId(1)
+                .content("aaaa")
                 .build();
 
         mockMvc.perform(post("/api/posts")
