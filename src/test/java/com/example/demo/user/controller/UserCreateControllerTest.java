@@ -29,7 +29,7 @@ class UserCreateControllerTest {
                 .build();
 
         // when// then
-        ResponseEntity<UserResponse> result = testContainer.userCreateController.createUser(userCreate);
+        ResponseEntity<UserResponse> result = testContainer.userCreateController.create(userCreate);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(result.getBody()).isNotNull();
         System.out.println(result.getBody().getId());

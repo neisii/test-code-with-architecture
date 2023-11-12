@@ -4,7 +4,6 @@ import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.mock.TestContainer;
 import com.example.demo.post.controller.response.PostResponse;
 import com.example.demo.post.domain.Post;
-import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
 import com.example.demo.user.domain.User;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +40,7 @@ class PostControllerTest {
         testContainer.postRepository.save(post);
 
         // when// then
-        ResponseEntity<PostResponse> result = testContainer.postController.getPostById(1);
+        ResponseEntity<PostResponse> result = testContainer.postController.getById(1);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().getContent()).isEqualTo("aaaa");
@@ -57,7 +56,7 @@ class PostControllerTest {
                 .build();
 
         // when// then
-        assertThatThrownBy(() -> testContainer.postController.getPostById(1))
+        assertThatThrownBy(() -> testContainer.postController.getById(1))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -89,7 +88,7 @@ class PostControllerTest {
         testContainer.postService.update(1, postUpdate);
 
         // when// then
-        ResponseEntity<PostResponse> result = testContainer.postController.getPostById(1);
+        ResponseEntity<PostResponse> result = testContainer.postController.getById(1);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().getContent()).isEqualTo("blah");
